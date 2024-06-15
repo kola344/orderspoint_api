@@ -1,6 +1,4 @@
 from fastapi import APIRouter
-from apis import ozon_parser
-from models.api.v1.points import ozon
 import db
 
 router = APIRouter()
@@ -10,9 +8,9 @@ async def index_page():
     return {"status": True, "api": "success"}
 
 @router.get("/add_point")
-async def add_point_page(url: str):
+async def add_point_page(url: str, wage: str, admin: str):
     try:
-        info = await db.ozon.add_point(url)
+        info = await db.point.add_point_ozon(url, wage, admin)
         return {"status": True, 'info': info}
     except Exception as e:
         return {"status": False, 'info': f'err: {e}'}
@@ -21,7 +19,7 @@ async def add_point_page(url: str):
 async def point_info_url_page(url: str):
     '''ARGS: url'''
     try:
-        data = await db.ozon.get_info_by_url(url)
+        data = await db.point.get_info_by_url(url)
         return {'status': True, 'info': 'success', 'data': data}
     except Exception as e:
         return {'status': False, 'info': f'err: {e}', 'data': {}}
@@ -29,7 +27,7 @@ async def point_info_url_page(url: str):
 @router.get('/get_point_id')
 async def point_info_id_page(point_id: str):
     try:
-        data = await db.ozon.get_info_by_id(point_id)
+        data = await db.point.get_info_by_id(point_id)
         return {'status': True, 'info': 'success', 'data': data}
     except Exception as e:
         return {'status': False, 'info': f'err: {e}', 'data': {}}

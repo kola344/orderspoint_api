@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from routers.api.v1.points import ozon, wildberries, yandex
+from routers.api.v1.admins import auth
 import db
 
 app = FastAPI()
 app.include_router(ozon.router, prefix="/api/v1/points/ozon", tags=["ozon"])
 app.include_router(wildberries.router, prefix="/api/v1/points/wildberries", tags=["wildberries"])
 app.include_router(yandex.router, prefix="/api/v1/points/yandex", tags=["yandex"])
+app.include_router(auth.router, prefix="api/v1/admins", tags=['admin'])
 
 @app.get('/')
 async def index_page():

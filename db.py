@@ -1,7 +1,9 @@
 from database import db
 import asyncio
 
-ozon = db.ozon_database()
+point = db.points_database()
+admin = db.admins_database()
 async def initialize():
     folder = 'database/'
-    await ozon.connect(folder)
+    await point.connect(folder)
+    await admin.connect(folder)

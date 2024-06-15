@@ -4,26 +4,40 @@ from config import updating_time
 import aiosqlite
 import asyncio
 
-class ozon_database:
+class points_database:
     def __init__(self):
         self.db = None
 
     async def connect(self, folder='database/'):
         self.db = await aiosqlite.connect(f'{folder}db.db')
 
+    async def check_point_by_address(self, address):
+        cursor = await self.db.execute("SELECT id FROM points WHERE address == ?", (address, ))
+        return await cursor.fetchone() is not None
+
     async def check_point_by_url(self, url):
         cursor = await self.db.execute('SELECT id FROM points WHERE url = ?', (url, ))
         return await cursor.fetchone() is not None
 
-    async def add_point(self, url):
+    async def add_point_ozon(self, url, wage, admin):
         if not await self.check_point_by_url(url):
             current_time = time.time()
             address, grade = await ozon_parser.parse_url(url)
             type = 'OZON'
-            await self.db.execute('INSERT INTO points (created_at, updated_at, grade, url, address, type) VALUES (?, ?, ?, ?, ?, ?)', (current_time, current_time, grade, url, address, type))
+            await self.db.execute('INSERT INTO points (created_at, updated_at, grade, url, address, type, wage, admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (current_time, current_time, grade, url, address, type, wage, admin))
             await self.db.commit()
             return 'success'
         return 'already exists'
+
+    async def add_point_wilberries(self, address, grade, wage, admin):
+        if not await self.check_point_by_address(address):
+            current_time = time.time()
+            type = 'WILDBERRIES'
+            await self.db.execute('INSERT INTO points (created_at, updated_at, grade, url, address, type, wage, admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (current_time, current_time, grade, None, address, type, wage, admin))
+            await self.db.commit()
+            return 'success'
+        return 'already exists'
+
 
     async def get_info_by_url(self, url):
         if await self.check_point_by_url(url):
@@ -54,11 +68,39 @@ class ozon_database:
             return {"id": data[0], "created_at": data[1], "updated_at": updated_at, "grade": data[3], "url": data[4],
                     "address": data[5], "type": data[6]}
 
+class admins_database:
+    def __init__(self):
+        self.db = None
+
+    async def connect(self, folder='database/'):
+        self.db = await aiosqlite.connect(f'{folder}db.db')
+
+    async def check_admin_by_id(self, admin_id):
+        cursor = await self.db.execute('SELECT id FROM points WHERE id = ?', (admin_id,))
+        return await cursor.fetchone() is not None
+
+    async def check_admin_by_login(self, login):
+        cursor = await self.db.execute('SELECT id FROM points WHERE login = ?', (login,))
+        return await cursor.fetchone() is not None
+
+    async def get_admin_data_by_id(self, admin_id):
+        cursor = await self.db.execute('SELECT * FROM admins WHERE id = ?', (admin_id, ))
+        data = await cursor.fetchone()
+        return {'id': data[0], 'login': data[1], 'password': data[2]}
+
+    async def get_admin_data_by_login(self, login):
+        cursor = await self.db.execute('SELECT * FROM admins WHERE login = ?', (login,))
+        data = await cursor.fetchone()
+        return {'id': data[0], 'login': data[1], 'password': data[2]}
+
+    async def add_admin(self, login, password):
+        await self.db.execute('INSERT INTO admins (login, password) VALUES (?, ?)', (login, password))
+        await self.db.commit()
 
 async def main():
-    db = ozon_database()
+    db = points_database()
     await db.connect('')
-    await db.add_point('https://www.ozon.ru/geo/sarov/83676/')
+    await db.add_point_ozon('https://www.ozon.ru/geo/sarov/83676/')
     print(await db.check_point_by_url('https://www.ozon.ru/geo/sarov/83676/'))
 
 if __name__ == '__main__':
