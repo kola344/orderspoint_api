@@ -1,0 +1,1 @@
+updating_time = 86400
