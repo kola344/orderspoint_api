@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+aiohttp
+aiosqlite
+beautifulsoup4
