@@ -76,11 +76,11 @@ class admins_database:
         self.db = await aiosqlite.connect(f'{folder}db.db')
 
     async def check_admin_by_id(self, admin_id):
-        cursor = await self.db.execute('SELECT id FROM points WHERE id = ?', (admin_id,))
+        cursor = await self.db.execute('SELECT id FROM admins WHERE id = ?', (admin_id,))
         return await cursor.fetchone() is not None
 
     async def check_admin_by_login(self, login):
-        cursor = await self.db.execute('SELECT id FROM points WHERE login = ?', (login,))
+        cursor = await self.db.execute('SELECT id FROM admins WHERE login = ?', (login,))
         return await cursor.fetchone() is not None
 
     async def get_admin_data_by_id(self, admin_id):
@@ -98,10 +98,10 @@ class admins_database:
         await self.db.commit()
 
 async def main():
-    db = points_database()
-    await db.connect('')
-    await db.add_point_ozon('https://www.ozon.ru/geo/sarov/83676/')
-    print(await db.check_point_by_url('https://www.ozon.ru/geo/sarov/83676/'))
+    adb = admins_database()
+    await adb.connect('')
+    await adb.add_admin('vasa', 'tupoy')
+    print(await adb.check_admin_by_login('vasa'))
 
 if __name__ == '__main__':
     asyncio.run(main())
