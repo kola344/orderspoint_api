@@ -8,6 +8,14 @@ router = APIRouter()
 async def index_page():
     return {"status": True, "api": "success"}
 
+@router.get('/search_points')
+async def search_points_page(query: str):
+    try:
+        info = await wildberries_parser.get_points(query)
+        return {"status": True, 'info': info}
+    except Exception as e:
+        return {"status": False, 'info': f'err: {e}'}
+
 @router.get("/add_point")
 async def add_point_page(address: str, grade: str, wage: str, admin: str):
     try:
