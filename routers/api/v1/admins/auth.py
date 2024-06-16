@@ -12,7 +12,7 @@ async def register_page(item: auth.register):
     except Exception as e:
         return {"status": False, "info": f"err: {e}"}
 
-@router.post('/get_admin_by_id')
+@router.post('/check_admin_by_id')
 async def get_admin_by_id_page(item: auth.get_admin_by_id):
     try:
         check = await db.admin.check_admin_by_id(item.admin_id)
@@ -20,10 +20,26 @@ async def get_admin_by_id_page(item: auth.get_admin_by_id):
     except Exception as e:
         return {'status': False, 'found': False, 'info': f'err: {e}'}
 
-@router.post('/get_admin_by_login')
+@router.post('/check_admin_by_login')
 async def get_admin_by_id_page(item: auth.get_admin_by_login):
     try:
         check = await db.admin.check_admin_by_login(item.login)
+        return {'status': True, 'found': check, 'info': 'success'}
+    except Exception as e:
+        return {'status': False, 'found': False, 'info': f'err: {e}'}
+
+@router.post('/get_admin_by_id')
+async def get_admin_by_id_page(item: auth.get_admin_by_id):
+    try:
+        check = await db.admin.get_admin_data_by_id(item.admin_id)
+        return {'status': True, 'found': check, 'info': 'success'}
+    except Exception as e:
+        return {'status': False, 'found': False, 'info': f'err: {e}'}
+
+@router.post('/get_admin_by_login')
+async def get_admin_by_id_page(item: auth.get_admin_by_login):
+    try:
+        check = await db.admin.get_admin_data_by_login(item.login)
         return {'status': True, 'found': check, 'info': 'success'}
     except Exception as e:
         return {'status': False, 'found': False, 'info': f'err: {e}'}
