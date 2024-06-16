@@ -18,3 +18,11 @@ async def get_admin_by_id_page(admin_id: str):
         return {'status': True, 'found': check, 'info': 'success'}
     except Exception as e:
         return {'status': False, 'found': False, 'info': f'err: {e}'}
+
+@router.get('/get_admin_by_login')
+async def get_admin_by_id_page(login: str):
+    try:
+        check = await db.admin.check_admin_by_login(login)
+        return {'status': True, 'found': check, 'info': 'success'}
+    except Exception as e:
+        return {'status': False, 'found': False, 'info': f'err: {e}'}
