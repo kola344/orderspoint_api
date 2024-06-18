@@ -29,7 +29,7 @@ class points_database:
             return 'success'
         return 'already exists'
 
-    async def add_point_wilberries(self, address, grade, wage, admin):
+    async def add_point_wildberries(self, address, grade, wage, admin):
         if not await self.check_point_by_address(address):
             current_time = time.time()
             type = 'WILDBERRIES'
@@ -96,6 +96,15 @@ class admins_database:
     async def add_admin(self, login, password):
         await self.db.execute('INSERT INTO admins (login, password) VALUES (?, ?)', (login, password))
         await self.db.commit()
+
+    async def get_points(self, login, database):
+        cursor = await database.execute('SELECT * FROM points WHERE admin = ?', (login, ))
+        data = await cursor.fetchall()
+        result = []
+        for point in data:
+            result.append({"id": point[0], "created_at": point[1], "updated_at": point[2], "grade": point[3], "url": point[4], "address": point[5], "type": point[6], "admin": point[7]})
+        return result
+
 
 async def main():
     adb = admins_database()

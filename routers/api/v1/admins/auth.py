@@ -31,15 +31,15 @@ async def get_admin_by_id_page(item: auth.get_admin_by_login):
 @router.post('/get_admin_by_id')
 async def get_admin_by_id_page(item: auth.get_admin_by_id):
     try:
-        check = await db.admin.get_admin_data_by_id(item.admin_id)
-        return {'status': True, 'found': check, 'info': 'success'}
+        data = await db.admin.get_admin_data_by_id(item.admin_id)
+        return {'status': True, 'data': data, 'info': 'success'}
     except Exception as e:
         return {'status': False, 'found': False, 'info': f'err: {e}'}
 
 @router.post('/get_admin_by_login')
 async def get_admin_by_id_page(item: auth.get_admin_by_login):
     try:
-        check = await db.admin.get_admin_data_by_login(item.login)
-        return {'status': True, 'found': check, 'info': 'success'}
+        data = await db.admin.get_admin_data_by_login(item.login)
+        return {'status': True, 'data': data, 'info': 'success'}
     except Exception as e:
         return {'status': False, 'found': False, 'info': f'err: {e}'}

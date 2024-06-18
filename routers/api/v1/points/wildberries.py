@@ -20,7 +20,7 @@ async def search_points_page(item: wildberries.search_points_Item):
 @router.post("/add_point")
 async def add_point_page(item: wildberries.add_point_Item):
     try:
-        info = await db.point.add_point_wilberries(item.address, item.grade, item.wage, item.admin)
+        info = await db.point.add_point_wildberries(item.address, item.grade, item.wage, item.admin)
         return {"status": True, 'info': info}
     except Exception as e:
         return {"status": False, 'info': f'err: {e}'}
